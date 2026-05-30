@@ -1,178 +1,307 @@
-# Phishing Email Detection Model
+# 🔐 Secure Login System
 
-## Overview
-This machine learning model detects phishing emails using Scikit-learn. It classifies emails as either "Phishing" or "Safe" based on textual content, keywords, and URL patterns.
+A comprehensive, production-ready secure login web application built with Flask featuring user authentication, password hashing, Two-Factor Authentication (2FA), and protection against common web vulnerabilities.
 
-## Features
-- **TF-IDF Vectorization**: Extracts text features from emails
-- **Two Classification Models**: 
-  - Naive Bayes (fast, baseline)
-  - Random Forest (better accuracy)
-- **Comprehensive Evaluation**:
-  - Accuracy score
-  - Confusion matrix
-  - ROC AUC score
-  - Classification report with precision, recall, and F1-score
-- **Visualizations**: ROC curves and confusion matrices
-- **Real-time Prediction**: Classify custom emails
+## ✨ Key Features
 
-## Installation
+### 🔐 Security Features
+- **Bcrypt Password Hashing**: Industry-standard password hashing with salt
+- **SQL Injection Protection**: Input sanitization and parameterized queries
+- **Rate Limiting**: Prevent brute-force attacks (10 attempts/hour for login)
+- **Account Lockout**: Automatic account lock after 5 failed login attempts (15 minutes)
+- **HTTPS Secure Cookies**: HttpOnly and Secure flags enabled
+- **Session Management**: Secure session handling with automatic timeout
+- **Two-Factor Authentication (2FA)**: TOTP (Time-based One-Time Password)
+- **Backup Codes**: 10 backup codes for account recovery
 
+### 👤 User Management
+- **User Registration**: Email validation, strong password requirements
+- **Login System**: Username or email login
+- **Session Management**: Automatic logout after inactivity
+- **Profile Management**: Change password, manage security settings
+- **Account Information**: View login history and account details
+
+### 🛡️ Validation & Protection
+- **Email Validation**: RFC-compliant email format checking
+- **Password Strength Requirements**:
+  - Minimum 8 characters
+  - Uppercase letter required
+  - Lowercase letter required
+  - Number required
+  - Special character required
+- **Username Validation**: 3-80 characters, alphanumeric with underscore/hyphen
+- **Input Sanitization**: Prevent XSS and injection attacks
+
+## 📋 Installation
+
+### Prerequisites
+- Python 3.8+
+- pip (Python package manager)
+
+### Setup Steps
+
+1. **Clone the repository**:
 ```bash
-# Install dependencies
-pip install -r requirements.txt
+cd "c:\Users\nandh\Downloads\task 4"
 ```
 
-## Dataset
-
-The model is trained on:
-- **15 Phishing Emails**: Containing common phishing indicators (urgency, verification requests, suspicious URLs)
-- **15 Legitimate Emails**: Standard business communications
-
-### Phishing Indicators Detected:
-- Suspicious keywords: verify, confirm, urgent, password, update, claim, alert, renew, reset, unlock, expired
-- Suspicious domains: .xyz, .tk, .ru, .ml, bit.ly, tinyurl
-- URL presence and patterns
-
-## Usage
-
-### Run the Complete Analysis
-
+2. **Create virtual environment** (if not already created):
 ```bash
-python phishing_detector.py
+python -m venv .venv
+.\.venv\Scripts\activate
 ```
 
-This will:
-1. Create the dataset
-2. Extract and vectorize features
-3. Train both Naive Bayes and Random Forest models
-4. Evaluate model performance
-5. Display confusion matrices and classification reports
-6. Generate visualizations
-7. Test on sample emails
-
-### Output Files
-- `phishing_detection_results.png`: Confusion matrices, ROC curves, and performance comparison
-
-## Expected Results
-
-### Naive Bayes Classifier
-- **Accuracy**: ~93%
-- **Precision**: High confidence in phishing predictions
-- **Recall**: Good detection of actual phishing emails
-
-### Random Forest Classifier
-- **Accuracy**: ~93-100%
-- **Better generalization** on unseen data
-- **Handles non-linear relationships** better
-
-## Model Performance Metrics
-
-### Confusion Matrix Interpretation
-```
-                Predicted
-              Safe  Phishing
-Actual  Safe   TN     FP
-        Phishing FN    TP
+3. **Install dependencies**:
+```bash
+pip install -r secure_login_requirements.txt
 ```
 
-- **True Negative (TN)**: Correctly identified safe emails
-- **False Positive (FP)**: Safe emails incorrectly flagged as phishing
-- **False Negative (FN)**: Phishing emails missed (most critical)
-- **True Positive (TP)**: Correctly identified phishing emails
+4. **Run the application**:
+```bash
+python secure_login.py
+```
 
-### Key Metrics
-- **Accuracy**: (TP + TN) / Total
-- **Precision**: TP / (TP + FP) - reliability of positive predictions
-- **Recall**: TP / (TP + FN) - ability to find all phishing emails
-- **F1-Score**: Harmonic mean of precision and recall
-- **ROC AUC**: Area under the ROC curve (0.5 = random, 1.0 = perfect)
+5. **Access the application**:
+Open your browser and navigate to: `http://localhost:5001`
 
-## Feature Engineering
+## 🚀 Usage
 
-### TF-IDF Features
-- Term Frequency-Inverse Document Frequency
-- Captures importance of words across all emails
-- Reduces weight of common words
+### User Registration
+1. Click "Register" on the login page
+2. Enter username (3-80 characters, alphanumeric)
+3. Enter valid email address
+4. Create strong password meeting all requirements
+5. Confirm password
+6. Click "Create Account"
 
-### Additional Features Considered
-- Suspicious keyword count
-- URL count in email
-- Suspicious domain detection
+### User Login
+1. Enter username or email
+2. Enter password
+3. If 2FA is enabled, enter 6-digit code from authenticator app
+4. Click "Login"
 
-## How to Extend
+### Setting Up 2FA
+1. Log in to your account
+2. Go to "Profile" → "Two-Factor Authentication"
+3. Click "Enable 2FA"
+4. Scan QR code with authenticator app (Google Authenticator, Authy, etc.)
+5. Enter 6-digit code from app
+6. Save backup codes securely
+7. 2FA is now enabled
 
-### Add More Training Data
-Modify `PHISHING_EMAILS` and `LEGITIMATE_EMAILS` lists in the script:
+### Disabling 2FA
+1. Go to Profile settings
+2. Click "Disable 2FA"
+3. Enter your password
+4. 2FA is disabled
 
+## 🗄️ Database Schema
+
+### Users Table
+```
+id (Integer, Primary Key)
+username (String, Unique, Indexed)
+email (String, Unique, Indexed)
+password_hash (String)
+created_at (DateTime)
+last_login (DateTime)
+is_active (Boolean)
+totp_secret (String)
+totp_enabled (Boolean)
+backup_codes (Text)
+failed_login_attempts (Integer)
+locked_until (DateTime)
+```
+
+## 🔒 Security Best Practices Implemented
+
+### Password Security
+- ✅ Bcrypt hashing with automatic salt generation
+- ✅ Password complexity requirements enforced
+- ✅ Old password verification before change
+- ✅ No password hints or recovery questions
+
+### Session Security
+- ✅ HttpOnly cookies (prevent JavaScript access)
+- ✅ Secure flag (HTTPS only)
+- ✅ Session timeout (24 hours)
+- ✅ User-specific session data
+
+### Attack Prevention
+- ✅ **SQL Injection**: Input sanitization and parameterized queries
+- ✅ **XSS (Cross-Site Scripting)**: Input validation and HTML escaping
+- ✅ **Brute Force**: Rate limiting and account lockout
+- ✅ **Session Hijacking**: Secure cookie flags
+- ✅ **Credential Stuffing**: Account lockout mechanism
+- ✅ **CSRF**: Flask session protection
+
+### Input Validation
+- ✅ Email format validation
+- ✅ Username format validation
+- ✅ Password strength validation
+- ✅ Input length limits
+- ✅ Special character sanitization
+
+## 📁 Project Structure
+
+```
+secure_login.py                 # Flask backend application
+secure_login_requirements.txt    # Python dependencies
+templates/
+├── register.html               # Registration page
+├── login.html                  # Login page
+├── dashboard.html              # User dashboard
+├── profile.html                # Profile settings
+└── setup_2fa.html             # 2FA setup page
+```
+
+## 🔧 Dependencies
+
+```
+Flask==3.1.3                    # Web framework
+Flask-SQLAlchemy==3.1.1         # Database ORM
+Flask-Bcrypt==1.0.1            # Password hashing
+Flask-Limiter==3.5.0           # Rate limiting
+PyOTP==2.9.0                   # 2FA implementation
+QRCode==7.4.2                  # QR code generation
+Pillow==12.2.0                 # Image processing
+```
+
+## 🔍 API Endpoints
+
+### Authentication
+- `POST /register` - User registration
+- `POST /login` - User login
+- `POST /verify-2fa` - Verify 2FA code
+- `GET /logout` - Logout user
+
+### User Management
+- `GET /dashboard` - User dashboard
+- `GET /profile` - Profile settings
+- `POST /change-password` - Change password
+- `POST /setup-2fa` - Setup 2FA
+- `POST /disable-2fa` - Disable 2FA
+
+## 🧪 Testing
+
+### Test Credentials
+```
+Username: testuser
+Email: test@example.com
+Password: TestPassword@123
+```
+
+### Common Test Cases
+1. Register new user with valid data
+2. Register with duplicate email
+3. Login with wrong password
+4. Login after account lockout
+5. Enable/disable 2FA
+6. Change password
+7. Access dashboard without login (should redirect)
+
+## 🚨 Common Errors & Solutions
+
+| Error | Solution |
+|-------|----------|
+| `ModuleNotFoundError` | Run `pip install -r secure_login_requirements.txt` |
+| `Address already in use` | Port 5001 is in use. Change port in `secure_login.py` |
+| `Database locked` | Close all connections and restart the app |
+| `2FA code invalid` | Ensure correct time synchronization on device |
+
+## 🔐 Password Requirements
+
+Users must create passwords with:
+- ✅ At least 8 characters
+- ✅ Uppercase letter (A-Z)
+- ✅ Lowercase letter (a-z)
+- ✅ Number (0-9)
+- ✅ Special character (!@#$%^&*)
+
+Example strong password: `SecurePass@123`
+
+## 📱 2FA Setup Guide
+
+### Supported Authenticator Apps
+- Google Authenticator
+- Microsoft Authenticator
+- Authy
+- FreeOTP
+- Any TOTP-compatible app
+
+### Backup Codes
+- 10 codes generated during 2FA setup
+- Each code can be used only once
+- Use if you lose access to authenticator
+- Store safely offline
+
+## 🌐 Deployment Considerations
+
+For production deployment:
+1. Use environment variables for secrets
+2. Enable HTTPS/SSL
+3. Use production WSGI server (Gunicorn, uWSGI)
+4. Set `debug=False`
+5. Use persistent database (PostgreSQL recommended)
+6. Implement logging and monitoring
+7. Set up regular database backups
+8. Configure CORS if needed
+
+## 📝 Configuration
+
+Edit `secure_login.py` to configure:
 ```python
-PHISHING_EMAILS = [
-    "Your email here",
-    # More emails...
-]
+app.config['SECRET_KEY'] = secrets.token_hex(32)
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///secure_login.db'
+app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(hours=24)
 ```
 
-### Use Custom Dataset
-Replace the lists with CSV file:
+## 🔄 Account Lockout Policy
 
-```python
-df = pd.read_csv('emails.csv')  # Must have 'email' and 'label' columns
-```
+- Failed login attempts tracked per user
+- Account locked after 5 failed attempts
+- Lockout duration: 15 minutes
+- Counter resets on successful login
+- Users can use backup codes during lockout (if 2FA enabled)
 
-### Adjust Model Parameters
-- Increase `max_features` in TfidfVectorizer for more features
-- Tune `n_estimators` in RandomForestClassifier
-- Modify suspicious keywords list
+## 📊 Features Comparison
 
-### Try Other Algorithms
-```python
-from sklearn.svm import SVC
-from sklearn.linear_model import LogisticRegression
+| Feature | Included |
+|---------|----------|
+| User Registration | ✅ |
+| Secure Login | ✅ |
+| Password Hashing (Bcrypt) | ✅ |
+| 2FA (TOTP) | ✅ |
+| Backup Codes | ✅ |
+| Rate Limiting | ✅ |
+| Account Lockout | ✅ |
+| Session Management | ✅ |
+| SQL Injection Protection | ✅ |
+| Input Validation | ✅ |
+| Password Change | ✅ |
+| Logout | ✅ |
 
-model = SVC(kernel='rbf', probability=True)  # or LogisticRegression()
-```
+## 🤝 Contributing
 
-## Classification Example
+Feel free to fork and submit pull requests for improvements.
 
-```python
-detector = PhishingDetector()
-# ... training code ...
+## 📄 License
 
-result = detector.predict("Click here to verify your account: http://secure-bank.xyz")
-print(result['prediction'])  # Output: 'Phishing'
-print(result['phishing_probability'])  # Output: 0.95
-```
+This project is provided as-is for educational and development purposes.
 
-## Performance Considerations
+## 🔗 Resources
 
-- **Training Time**: < 1 second
-- **Prediction Time**: < 1ms per email
-- **Memory**: ~2-5 MB for trained models
-- **Scalability**: Can handle millions of emails with optimization
+- [Flask Documentation](https://flask.palletsprojects.com/)
+- [Bcrypt Best Practices](https://auth0.com/blog/hashing-passwords-one-way-road-to-security/)
+- [OWASP Top 10](https://owasp.org/www-project-top-ten/)
+- [PyOTP Documentation](https://pyauth.github.io/pyotp/)
 
-## Limitations
+## 📞 Support
 
-- Limited training data (30 emails) - production models need thousands
-- Simple feature extraction - advanced methods like LSTM could improve results
-- Language-specific (English) - needs adaptation for other languages
-- May miss novel phishing techniques not in training data
+For issues or questions, please review the code comments and consult the documentation above.
 
-## Future Improvements
+---
 
-1. **Deep Learning**: Use neural networks for better feature learning
-2. **Domain Authentication**: Check SPF, DKIM, DMARC records
-3. **Attachment Analysis**: Scan for malicious attachments
-4. **User Behavior**: Track user's typical email patterns
-5. **Real-time Updates**: Update model with new phishing patterns
-6. **Multi-language Support**: Handle emails in multiple languages
-
-## Author Notes
-
-This model demonstrates core concepts of:
-- Text classification using TF-IDF
-- Model training and evaluation
-- Confusion matrices and performance metrics
-- ROC curves and AUC scores
-- Visualization of ML results
-
-For production use, combine with other security measures (authentication, URL checking, sandboxing).
+**Last Updated**: May 24, 2026  
+**Version**: 1.0.0  
+**Status**: Production Ready
